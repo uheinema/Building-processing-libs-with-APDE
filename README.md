@@ -2,6 +2,14 @@
 
 ## Prereqisites
 
+
+> Warning!
+All this applies to APDE `0.51` only, `0.52 pre1` will not work! That's why it is pre1... 
+
+Set up APDE to
+1. Build on internal storage - OFF
+2. Keep build folder - ON
+
 Let's asume we are not creating a lib from scratch, but already have a sketch containing some useful classes.
 
  Just as examples for the follwing step I have prepared LIB_start.pde.
@@ -457,14 +465,17 @@ Excuse me.. where were we? Ah, yes!
 
 Almost there:
 
-After a successful build, I can find the compiled packet at 
+After a successful build, I can find the compiled packet .class files at 
 `build/bin/classes/my/cool/stuff/...`
+On other platforms, search for Indicstor.class ...
+
 What we need is a `MyStuff.jar` like
--  MyStuff.jar  
- -- my  
-  --- cool  
-   ---- stuff  
-    ------ ...  
+-  MyStuff.jar
+ - -- my
+  - --- cool
+   - ---- stuff
+    - ...
+    
 located in 
 `Sketchbook/libraries/MyStuff/library/`
 
@@ -480,47 +491,86 @@ And no.
 
 Zip the directory MyStuff into MyStuff.zip,  and it should be installable with Processing...but before you do, test it (without having to go through the packaging/installation routine).
 > Android/APDE need(?) the .jar in a DEXed form, too.  
-Fortunately, APDE comes with a build-in DXter, see below. (Tbw..@Calsign might change/simplify how that works with the opcoming release anyhow)
+Fortunately, APDE comes with a build-in DXter, see below. (Tbw..@Calsign might change/simplify how that works with the upcoming release anyhow)
+
 
 
 ## Does it work?
 
 Let's see...
 
-With APDE you first have to (re-)dex the .jar to create a dexed one. (No, I won't explain why and what that is here)
+### To dex, or not to dex
+
+With APDE/Android you first have to (re-)dex the .jar to create a Dalvik EXecutable. (No, I won't explain why and what that is here. Look at (https://android.googlesource.com/platform/dalvik/+/a9ac3a9d1f8de71bcdc39d1f4827c04a952a0c29/dx/src/com/android/dx/command/dexer/Main.java))
+Oops. 
+
+
+> The dx tool lets you generate Android bytecode from .class files. The tool converts target files and/or directories to Dalvik executable format (.dex) files, so that they can run in the Android environment. It can also dump the class files in a human-readable format and run a target unit test. You can get the usage and options for this tool by using dx --help.
+
 Note that this has to be done each time you modify the .jar!
+
+You can do that with the APDE Library Manager, fine for now. Try it. 
+
 ~~Instructions there.~~
+
+Or automat the somewhat tedious process by
+
+### Create a Termux redex command
+
+1. Install [Termux](https://termux.com/)
+2. Start termux.
+3. Run  
+`termux-setup-storage`  
+and grant access.
+4. Install dx  
+`pkg install dx`
+5. Create a file like ( or use redex.txt)
+```Bash
+#!
+# redex libname
+# - run dx to update an APDE Processing library
+cd storage/shared/Sketchbook/libraries/$1
+dx --dex --output=library-dex/$1-dex.jar library/$1.jar
+#
+```
+6. Send this file to Termux, calling it 'redex'. Ignore funny message.
+7. Copy it to your Termux home   
+ `cp downloads/redex .`
+8. Make it executable
+ `chmod +x redex`
+ 
+ From now on, you can start a Termux session and  
+ `./redex MyStuff`  
+to (re-)create the dexed library.
+
+Try it.
+No news is good news.
+
+
+### Got DEX, will test!
 
 Done?
 
 Create a new sketch, let's call it `Mytest`.
-Put the `sketch.pde` from LIB_javainto the new sketch folder, don't forget to copy 'data/' ( or do, and see what happens...better postpone thst till later)
+Put the `sketch.pde` from LIB_java_final  into the new sketch folder, don't forget to copy 'data/' ( or do, and see what happens...better postpone that till later)
 
 Run it.
 
 Does it work?
+
+### Example given
 
 Congratulations, you build a library for Processing and are already using it.
 
 And this has just become your first example, so copy it into `library/MyStuff/examples/example1`.
 It should now be visible (and useable) in your IDE under `Library Examples/'MyStuff/example1'.
 
+> When only one example exists or there is a .pde in the library root Processing may open that automatically. But you will have more than one example anyhow.
+
 Test it.
 
-Zip Sketchbook/libraries/MyStuff, and it can be installed like any other zipped library. Should look like  
--MyStuff.zip  
-----MyStuff  
--------README.md  
--------library   
---------- MyStuff.jar  
--------library-dex  
----------MyStuff-dex.jar  
+Zip Sketchbook/libraries/MyStuff, and it can be installed like any other zipped library.
 
-and so on.
-> Structure and naming IS important here, it will simply not work when wrong. 
-Just unziping into Sketchbook/libraries/ always works (but you have to re-dex manually).
-
-Now 
 - [ ] Check documentation and examples
 - [ ] Put it on GitHub.
 - [ ] ...
