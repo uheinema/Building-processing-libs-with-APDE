@@ -1,0 +1,6 @@
+#!
+# redex libname
+# - run dx to update an APDE Processing library
+cd storage/shared/Sketchbook/libraries/$1
+dx --dex --output=library-dex/$1-dex.jar library/$1.jar
+#
