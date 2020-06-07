@@ -1,0 +1,18 @@
+#!
+# redex Processing library
+#
+# note this uses the Termux
+# way to access external storage 
+#
+cd storage/shared/Sketchbook/libraries/
+name=MyStuff
+read -e -p "Library to redex [$name]:"  libname
+libname=${libname:-$name}
+cd $libname
+echo Dexing $libname with 
+dx --version
+dx --dex --output=library-dex/${libname}-dex.jar\
+  library/${libname}.jar
+ls -l library-dex/*
+read -p 'No news is good news.' fakenews
+#

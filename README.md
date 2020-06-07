@@ -448,7 +448,7 @@ class JAR extends ZIP....and inherits its constructor, too!.
 
 So basically all we need to do is create a .zip with the extension .jar, put our package directory structure containing the compiled .class files into it, and we are done. No 3GB IDE needed.
 
-All the rest is exlained at
+If you are curious, alll the rest is exlained at
  [the official place.](https://docs.oracle.com/javase/tutorial/deployment/jar/manifestindex.html)
  
  As they correctly say
@@ -533,11 +533,15 @@ cd storage/shared/Sketchbook/libraries/$1
 dx --dex --output=library-dex/$1-dex.jar library/$1.jar
 #
 ```
-6. Send this file to Termux, calling it 'redex'. Ignore funny message.
-7. Copy it to your Termux home   
- `cp downloads/redex .`
-8. Make it executable
+6. Send this file to Termux, calling it 'redex'. 
+    - Choose `OPEN FOLDER`.
+ A Termux window will open
+    
+7. Make it executable  
  `chmod +x redex`
+8. Copy the file to your Termux home   
+ `cp redex ..`
+
  
  From now on, you can start a Termux session and  
  `./redex MyStuff`  
@@ -545,6 +549,8 @@ to (re-)create the dexed library.
 
 Try it.
 No news is good news.
+
+Or get fancy and [automat Termux](#ps)
 
 
 ### Got DEX, will test!
@@ -565,7 +571,7 @@ Congratulations, you build a library for Processing and are already using it.
 And this has just become your first example, so copy it into `library/MyStuff/examples/example1`.
 It should now be visible (and useable) in your IDE under `Library Examples/'MyStuff/example1'.
 
-> When only one example exists or there is a .pde in the library root Processing may open that automatically. But you will have more than one example anyhow.
+> When only one example exists or there is a .pde in the library root Processing may open that automatically. But you will soon have more than one example anyhow.
 
 Test it.
 
@@ -573,12 +579,16 @@ Zip Sketchbook/libraries/MyStuff, and it can be installed like any other zipped 
 
 - [ ] Check documentation and examples
 - [ ] Put it on GitHub.
-- [ ] ...
+- [ ] See how it looks.
+- [ ] Test
+- [ ] ....
 
 ## Maintaining/changing the library
 
 Expanding/testing in general should.be done where the library sources are kept.
+
 Changes can be tested immediately this way, as local package members override the ones in installed libraries (Q: Is this always/everywhere the case??).
+
 When done, and before you can use it with other sketches, of course the .jar/-dex.jar must be recreated as above.
 
 This also means that for punctual changes or addition of new classes in large libraries only the .java files for the classes to be changed need to be copied to a sketch folder for development and unit testing, and can be later - or not at all - integrated into the complete library.
@@ -591,7 +601,7 @@ This also means that for punctual changes or addition of new classes in large li
 
 All code here was written ( if not copied from elsewhere ), edited and tested with APDE, and APDE only, on a cell phone, single-finger typing...I might explain why on another day.
 
-Praise Calsign!
+Praise @Calsign !
 
 Also, the .jar and .jar-dex libraries here where created with APDE - after all, that was the point of the whole exercise.
 
@@ -599,6 +609,7 @@ Also, the .jar and .jar-dex libraries here where created with APDE - after all, 
 
 ```Java
 /***************************************************************************************
+ *
  * Tutorial
  * How to create Processing libraries out of your existing sketch (using [APDE](#apde))
  * Copyright (c) 2020 by the author
@@ -608,10 +619,81 @@ Also, the .jar and .jar-dex libraries here where created with APDE - after all, 
  * Released under the terms of the GPLv3, refer to: http://www.gnu.org/licenses/gpl.html
  ***************************************************************************************/
 ```
+
+---
+ 
+ ## PS
+ 
+ ### Automat Termux
+ 
+If you have tried EDIT on sending the file,
+you will have got a hint to `bin/termux-file-editor` on transfering reflex.txt?
+
+Let's do that.
+
+Create a receiver to execute the passed file:
+1. Start Termux
+2. `mkdir bin`
+3. `cd bin`
+4. `echo 'bash $1 $1' > termux-file-editor`
+5. `chmod +x termux-file-editor`
+
+Done.
+
+#### From now on, every file send to Termux with `EDIT`  will be executed as a bash script!
+
+>So be carefulwhat you send! 
+We should test eg. for extension .termux later...
+
+Files can still be transfered using `OPEN FOLDER`
+
+Something useful is eg. `redex.termux`.
+
+Just send it to Termux for editing and you should get
+
+----
+
+```
+/data/data/com.termux/files/home/downloads/redex.termux
+Library to redex [MyStuff]:forU
+Dexing forU with
+dx version 1.16
+-rw-rw---- 1 root everybody 71005 Jun  7 03:47 library-dex/forU-dex.jar
+No news is good news.
+```
+----
+
+The script is
+
+----
+
+```
+#!
+# redex Processing library
+#
+# note this uses the Termux
+# way to access external storage 
+#
+cd storage/shared/Sketchbook/libraries/
+name=MyStuff
+read -e -p "Library to redex [$name]:"  libname
+libname=${libname:-$name}
+cd $libname
+echo Dexing $libname with $(dx --version)
+dx --dex --output=library-dex/${libname}-dex.jar\
+  library/${libname}.jar
+ls -l library-dex/*
+read -p 'No news is good news.' fakenews
+#
+```
+----
+
  
  
  
  
+ 
+----
 
 
 -----
