@@ -599,7 +599,7 @@ Also, the .jar and .jar-dex libraries here where created with APDE - after all, 
 
 ```Java
 /***************************************************************************************
- * 
+ * Tutorial
  * How to create Processing libraries out of your existing sketch (using [APDE](#apde))
  * Copyright (c) 2020 by the author
  * @author Ullrich Heinemann , https://github.com/uheinema
